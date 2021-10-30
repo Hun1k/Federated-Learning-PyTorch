@@ -9,10 +9,10 @@ import matplotlib.pyplot as plt
 import torch
 from torch.utils.data import DataLoader
 
-from utils import get_dataset
-from options import args_parser
-from update import test_inference
-from models import MLP, CNNMnist, CNNFashion_Mnist, CNNCifar
+from src.utils import get_dataset
+from src.options import args_parser
+from src.update import test_inference
+from src.models import MLP, CNNMnist, CNNFashion_Mnist, CNNCifar
 
 
 if __name__ == '__main__':

@@ -13,10 +13,10 @@ from tqdm import tqdm
 import torch
 from tensorboardX import SummaryWriter
 
-from options import args_parser
-from update import LocalUpdate, test_inference
-from models import MLP, CNNMnist, CNNFashion_Mnist, CNNCifar
-from utils import get_dataset, average_weights, exp_details
+from src.options import args_parser
+from src.update import LocalUpdate, test_inference
+from src.models import MLP, CNNMnist, CNNFashion_Mnist, CNNCifar
+from src.utils import get_dataset, average_weights, exp_details
 
 
 if __name__ == '__main__':
