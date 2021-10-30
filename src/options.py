@@ -44,21 +44,21 @@ def args_parser():
 
     # other arguments
     parser.add_argument('--dataset', type=str, default='mnist', help="name \
-                        of dataset")
+                        of dataset")  # 数据集名字
     parser.add_argument('--num_classes', type=int, default=10, help="number \
-                        of classes")
-    parser.add_argument('--gpu', default=0, help="To use cuda, set \
-                        to a specific GPU ID. Default set to use CPU.")
+                        of classes")    # 不懂
+    parser.add_argument('--gpu', default=None, help="To use cuda, set \
+                        to a specific GPU ID. Default set to use CPU.")  # 是否使用GPU，数字代表GPU的序号
     parser.add_argument('--optimizer', type=str, default='sgd', help="type \
-                        of optimizer")
+                        of optimizer")  # 优化方法，默认SGD
     parser.add_argument('--iid', type=int, default=1,
-                        help='Default set to IID. Set to 0 for non-IID.')
+                        help='Default set to IID. Set to 0 for non-IID.')  # 0代表独立同分布，1代表非独立同分布
     parser.add_argument('--unequal', type=int, default=0,
                         help='whether to use unequal data splits for  \
-                        non-i.i.d setting (use 0 for equal splits)')
+                        non-i.i.d setting (use 0 for equal splits)')  # 不均等的数据分割（0均等）
     parser.add_argument('--stopping_rounds', type=int, default=10,
-                        help='rounds of early stopping')
+                        help='rounds of early stopping')  # 不懂
     parser.add_argument('--verbose', type=int, default=1, help='verbose')
-    parser.add_argument('--seed', type=int, default=1, help='random seed')
+    parser.add_argument('--seed', type=int, default=1, help='random seed')  # 种子
     args = parser.parse_args()
     return args
