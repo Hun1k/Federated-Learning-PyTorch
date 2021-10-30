@@ -144,17 +144,18 @@ def mnist_noniid_unequal(dataset, num_users):
 
 def cifar_iid(dataset, num_users):
     """
+    用户抽取训练数据 CIFAR10 I.I.D.
     Sample I.I.D. client data from CIFAR10 dataset
-    :param dataset:
-    :param num_users:
-    :return: dict of image index
+    :param dataset: 训练集
+    :param num_users: 用户数量
+    :return: dict of image index  字典，key是用户编号比如1到10，value是一个set，是数据集中的数据的编号，如 3，14，17...
     """
-    num_items = int(len(dataset)/num_users)
-    dict_users, all_idxs = {}, [i for i in range(len(dataset))]
-    for i in range(num_users):
+    num_items = int(len(dataset)/num_users)  # 用户平均获取的数据集大小
+    dict_users, all_idxs = {}, [i for i in range(len(dataset))]  # all_idxs是数据集每个数据的位置
+    for i in range(num_users):  # 对每个用户
         dict_users[i] = set(np.random.choice(all_idxs, num_items,
-                                             replace=False))
-        all_idxs = list(set(all_idxs) - dict_users[i])
+                                             replace=False))  # 从all_idxs（所有数据的位置）选择num_items（用户平均数量）个，replace=False不取重复值
+        all_idxs = list(set(all_idxs) - dict_users[i])  # 总集合-选完的集合，避免重复
     return dict_users
 
 

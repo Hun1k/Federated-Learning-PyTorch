@@ -43,10 +43,10 @@ def args_parser():
                         strided convolutions")
 
     # other arguments
-    parser.add_argument('--dataset', type=str, default='mnist', help="name \
+    parser.add_argument('--dataset', type=str, default='cifar', help="name \
                         of dataset")  # 数据集名字
     parser.add_argument('--num_classes', type=int, default=10, help="number \
-                        of classes")    # 不懂
+                        of classes")    # 分类的种类数量
     parser.add_argument('--gpu', default=None, help="To use cuda, set \
                         to a specific GPU ID. Default set to use CPU.")  # 是否使用GPU，数字代表GPU的序号
     parser.add_argument('--optimizer', type=str, default='sgd', help="type \

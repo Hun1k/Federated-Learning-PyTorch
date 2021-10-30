@@ -11,7 +11,7 @@ class MLP(nn.Module):
         super(MLP, self).__init__()
         self.layer_input = nn.Linear(dim_in, dim_hidden)
         self.relu = nn.ReLU()
-        self.dropout = nn.Dropout()
+        self.dropout = nn.Dropout()  # 把元素以p的概率变成0，防止过拟合
         self.layer_hidden = nn.Linear(dim_hidden, dim_out)
         self.softmax = nn.Softmax(dim=1)
 
