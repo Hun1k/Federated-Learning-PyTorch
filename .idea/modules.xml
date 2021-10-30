@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Federated-Learning-PyTorch-A.iml" filepath="$PROJECT_DIR$/.idea/Federated-Learning-PyTorch-A.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Federated-Learning-PyTorch/.idea/Federated-Learning-PyTorch.iml" filepath="$PROJECT_DIR$/../Federated-Learning-PyTorch/.idea/Federated-Learning-PyTorch.iml" />
     </modules>
   </component>
 </project>
