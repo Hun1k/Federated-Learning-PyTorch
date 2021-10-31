@@ -25,7 +25,7 @@ def args_parser():
                         help='SGD momentum (default: 0.5)')    # 动量随机梯度下降，对SGD的改进，减少其环绕方向的分量，向最优点行进的# 更快，更平稳 t = βt' + (1-β）t'
 
     # model arguments
-    parser.add_argument('--model', type=str, default='mlp', help='model name')  # 模型名字
+    parser.add_argument('--model', type=str, default='cnn', help='model name')  # 模型名字
     parser.add_argument('--kernel_num', type=int, default=9,
                         help='number of each kind of kernel')   # 每种核的数量
     parser.add_argument('--kernel_sizes', type=str, default='3,4,5',
@@ -52,7 +52,7 @@ def args_parser():
     parser.add_argument('--optimizer', type=str, default='sgd', help="type \
                         of optimizer")  # 优化方法，默认SGD
     parser.add_argument('--iid', type=int, default=1,
-                        help='Default set to IID. Set to 0 for non-IID.')  # 0代表独立同分布，1代表非独立同分布
+                        help='Default set to IID. Set to 0 for non-IID.')  # 1代表独立同分布，0代表非独立同分布
     parser.add_argument('--unequal', type=int, default=0,
                         help='whether to use unequal data splits for  \
                         non-i.i.d setting (use 0 for equal splits)')  # 不均等的数据分割（0均等）

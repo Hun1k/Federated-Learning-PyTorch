@@ -35,10 +35,10 @@ def get_dataset(args):
         else:
             # Sample Non-IID user data from cifar   抽取非独立同分布的数据
             if args.unequal:
-                # Chose uneuqal splits for every user  不均等的分割
+                # Chose uneuqal splits for every user  非独立同分布的不均等的分割 对于cifar没有不等
                 raise NotImplementedError()
             else:
-                # Chose euqal splits for every user
+                # Chose euqal splits for every user    非独立同分布的均等分割
                 user_groups = cifar_noniid(train_dataset, args.num_users)
 
     elif args.dataset == 'mnist' or 'fmnist':

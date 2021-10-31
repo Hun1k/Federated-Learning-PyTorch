@@ -162,30 +162,32 @@ def cifar_iid(dataset, num_users):
 def cifar_noniid(dataset, num_users):
     """
     Sample non-I.I.D client data from CIFAR10 dataset
-    :param dataset:
-    :param num_users:
+    用户抽取训练数据 CIFAR10 non-I.I.D
+    :param dataset: 训练集
+    :param num_users: 用户数量
     :return:
     """
+    # 50,000 training imgs -->  200 imgs/shard X 250 shards   五万张图片分为200个分片，每个分片有250张图片
     num_shards, num_imgs = 200, 250
-    idx_shard = [i for i in range(num_shards)]
-    dict_users = {i: np.array([]) for i in range(num_users)}
-    idxs = np.arange(num_shards*num_imgs)
+    idx_shard = [i for i in range(num_shards)]  # idx_shard [0,1,2,3...,199]
+    dict_users = {i: np.array([]) for i in range(num_users)}  # {0:[],1:[],2:[],...,9:[]}
+    idxs = np.arange(num_shards*num_imgs)  # [0,1,2,...,200*250]
     # labels = dataset.train_labels.numpy()
-    labels = np.array(dataset.train_labels)
+    labels = np.array(dataset.targets)  # []标签
 
     # sort labels
-    idxs_labels = np.vstack((idxs, labels))
-    idxs_labels = idxs_labels[:, idxs_labels[1, :].argsort()]
-    idxs = idxs_labels[0, :]
+    idxs_labels = np.vstack((idxs, labels))  # [[位置],[标签]]，如[[0,1,2,3],["d","c","a","b"]]
+    idxs_labels = idxs_labels[:, idxs_labels[1, :].argsort()]  # argsort对二维数组按照labels进行了排序，idxs也随着标签移动了[[2,3,1,0],["a","b","c","d"]]，把相同标签的聚在一起，分片时保证了非独立同分布
+    idxs = idxs_labels[0, :]  # 位置取出来，即[2,3,1,0]
 
     # divide and assign
-    for i in range(num_users):
-        rand_set = set(np.random.choice(idx_shard, 2, replace=False))
-        idx_shard = list(set(idx_shard) - rand_set)
+    for i in range(num_users):  # 对每个用户：
+        rand_set = set(np.random.choice(idx_shard, 2, replace=False))  # idx_shard 200里面选择2个
+        idx_shard = list(set(idx_shard) - rand_set)  # idx_shard 减去选择过的值
         for rand in rand_set:
-            dict_users[i] = np.concatenate(
-                (dict_users[i], idxs[rand*num_imgs:(rand+1)*num_imgs]), axis=0)
-    return dict_users
+            dict_users[i] = np.concatenate(  # concatenate合并
+                (dict_users[i], idxs[rand*num_imgs:(rand+1)*num_imgs]), axis=0)  # 取两个分片，分片内几乎都是同一类的数据
+    return dict_users  # 字典，key是用户编号，value是数据在数据集的位置，这是非独立同分布
 
 
 if __name__ == '__main__':
