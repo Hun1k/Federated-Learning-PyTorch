@@ -20,14 +20,14 @@ from src.utils import get_dataset, average_weights, exp_details
 
 
 if __name__ == '__main__':
-    start_time = time.time()
+    start_time = time.time()  # 记录程序运行时间
 
     # define paths
-    path_project = os.path.abspath('..')
+    path_project = os.path.abspath('..')  # 'G:\\workspace\\Federated-Learning-PyTorch'
     logger = SummaryWriter('../logs')
 
-    args = args_parser()
-    exp_details(args)
+    args = args_parser()  # Namespace(dataset='mnist', epochs=10, frac=0.1, gpu=None, iid=1, kernel_num=9, kernel_sizes='3,4,5', local_bs=10, local_ep=10, lr=0.01, max_pool='True', model='cnn', momentum=0.5, norm='batch_norm', num_channels=1, num_classes=10, num_filters=32, num_users=100, optimizer='sgd', seed=1, stopping_rounds=10, unequal=0, verbose=1)
+    exp_details(args)  # 打印模型参数
 
     if args.gpu:
         torch.cuda.set_device(args.gpu)

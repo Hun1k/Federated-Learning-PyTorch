@@ -43,7 +43,7 @@ def args_parser():
                         strided convolutions")
 
     # other arguments
-    parser.add_argument('--dataset', type=str, default='cifar', help="name \
+    parser.add_argument('--dataset', type=str, default='mnist', help="name \
                         of dataset")  # 数据集名字
     parser.add_argument('--num_classes', type=int, default=10, help="number \
                         of classes")    # 分类的种类数量
