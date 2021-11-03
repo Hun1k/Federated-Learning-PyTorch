@@ -24,11 +24,11 @@ class DatasetSplit(Dataset):
 
 
 class LocalUpdate(object):
-    def __init__(self, args, dataset, idxs, logger):
+    def __init__(self, args, dataset, idxs, logger):  # dataset 训练集 此客户端包含的数据位置
         self.args = args
         self.logger = logger
         self.trainloader, self.validloader, self.testloader = self.train_val_test(
-            dataset, list(idxs))
+            dataset, list(idxs))  # 分割数据集为 训练、验证和测试集
         self.device = 'cuda' if args.gpu else 'cpu'
         # Default criterion set to NLL loss function
         self.criterion = nn.NLLLoss().to(self.device)
@@ -37,18 +37,19 @@ class LocalUpdate(object):
         """
         Returns train, validation and test dataloaders for a given dataset
         and user indexes.
+        返回给定数据集的训练、验证和测试数据加载器和用户的索引。
         """
         # split indexes for train, validation, and test (80, 10, 10)
-        idxs_train = idxs[:int(0.8*len(idxs))]
-        idxs_val = idxs[int(0.8*len(idxs)):int(0.9*len(idxs))]
-        idxs_test = idxs[int(0.9*len(idxs)):]
+        idxs_train = idxs[:int(0.8*len(idxs))]  # 前80%是训练集
+        idxs_val = idxs[int(0.8*len(idxs)):int(0.9*len(idxs))]  # 80%-90%是验证集
+        idxs_test = idxs[int(0.9*len(idxs)):]  # 90%-100%是测试集
 
         trainloader = DataLoader(DatasetSplit(dataset, idxs_train),
-                                 batch_size=self.args.local_bs, shuffle=True)
+                                 batch_size=self.args.local_bs, shuffle=True)  # 分割数据集 batch_size = args.local_bs
         validloader = DataLoader(DatasetSplit(dataset, idxs_val),
-                                 batch_size=int(len(idxs_val)/10), shuffle=False)
+                                 batch_size=int(len(idxs_val)/10), shuffle=False)  # batch_size是总验证集/10
         testloader = DataLoader(DatasetSplit(dataset, idxs_test),
-                                batch_size=int(len(idxs_test)/10), shuffle=False)
+                                batch_size=int(len(idxs_test)/10), shuffle=False)  # batch_size是总测试集/10
         return trainloader, validloader, testloader
 
     def update_weights(self, model, global_round):
@@ -56,7 +57,7 @@ class LocalUpdate(object):
         model.train()
         epoch_loss = []
 
-        # Set optimizer for the local updates
+        # Set optimizer for the local updates 选择优化器
         if self.args.optimizer == 'sgd':
             optimizer = torch.optim.SGD(model.parameters(), lr=self.args.lr,
                                         momentum=0.5)
@@ -64,27 +65,27 @@ class LocalUpdate(object):
             optimizer = torch.optim.Adam(model.parameters(), lr=self.args.lr,
                                          weight_decay=1e-4)
 
-        for iter in range(self.args.local_ep):
+        for iter in range(self.args.local_ep):  # 本地epochs
             batch_loss = []
-            for batch_idx, (images, labels) in enumerate(self.trainloader):
+            for batch_idx, (images, labels) in enumerate(self.trainloader):  # 一个batch_size大小是args.local_bs
                 images, labels = images.to(self.device), labels.to(self.device)
 
                 model.zero_grad()
-                log_probs = model(images)
-                loss = self.criterion(log_probs, labels)
-                loss.backward()
-                optimizer.step()
+                log_probs = model(images)  # 预测值
+                loss = self.criterion(log_probs, labels)  # 预测 标签 算出损失
+                loss.backward()  # 反向传播
+                optimizer.step()  # 梯度下降
 
-                if self.args.verbose and (batch_idx % 10 == 0):
+                if self.args.verbose and (batch_idx % 10 == 0):  # 打印运行日志 全局轮次，本地轮次， 本地轮次进度， 损失
                     print('| Global Round : {} | Local Epoch : {} | [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                         global_round, iter, batch_idx * len(images),
                         len(self.trainloader.dataset),
                         100. * batch_idx / len(self.trainloader), loss.item()))
                 self.logger.add_scalar('loss', loss.item())
-                batch_loss.append(loss.item())
-            epoch_loss.append(sum(batch_loss)/len(batch_loss))
-
-        return model.state_dict(), sum(epoch_loss) / len(epoch_loss)
+                batch_loss.append(loss.item())  # 记录损失（本地一个轮次，一个batch_size记录一次损失）
+            epoch_loss.append(sum(batch_loss)/len(batch_loss))  # 记录损失， 一个epoch记录一次损失（是batchloss取平均）
+        # 在返回模型权重信息之前，应该对权重添加信息
+        return model.state_dict(), sum(epoch_loss) / len(epoch_loss)  # 调用一次update_weights，客户端进行本地训练，返回模型state_dict， 客户端的损失函数（epoch_loss取平均）
 
     def inference(self, model):
         """ Returns the inference accuracy and loss.

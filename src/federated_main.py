@@ -33,10 +33,10 @@ if __name__ == '__main__':
         torch.cuda.set_device(args.gpu)
     device = 'cuda' if args.gpu else 'cpu'
 
-    # load dataset and user groups
+    # load dataset and user groups 训练集 测试集 和一个各个客户端的数据分组情况， 字典类型，key：客户端 value 数据在数据集中的位置
     train_dataset, test_dataset, user_groups = get_dataset(args)
 
-    # BUILD MODEL
+    # BUILD MODEL  选择网络模型
     if args.model == 'cnn':
         # Convolutional neural netork
         if args.dataset == 'mnist':
@@ -60,44 +60,44 @@ if __name__ == '__main__':
     # Set the model to train and send it to device.
     global_model.to(device)
     global_model.train()
-    print(global_model)
+
 
     # copy weights
     global_weights = global_model.state_dict()
 
     # Training
-    train_loss, train_accuracy = [], []
+    train_loss, train_accuracy = [], []  # 训练损失以及准确度
     val_acc_list, net_list = [], []
     cv_loss, cv_acc = [], []
     print_every = 2
     val_loss_pre, counter = 0, 0
 
-    for epoch in tqdm(range(args.epochs)):
+    for epoch in tqdm(range(args.epochs)):  # tqdm进度条
         local_weights, local_losses = [], []
-        print(f'\n | Global Training Round : {epoch+1} |\n')
+        print(f'\n | Global Training Round : {epoch+1} |\n')  # | Global Training Round : 1 |
 
         global_model.train()
-        m = max(int(args.frac * args.num_users), 1)
-        idxs_users = np.random.choice(range(args.num_users), m, replace=False)
+        m = max(int(args.frac * args.num_users), 1)  # 参与迭代的客户端数量
+        idxs_users = np.random.choice(range(args.num_users), m, replace=False)  # 从客户端中随机选取m个客户端
 
-        for idx in idxs_users:
+        for idx in idxs_users:  # 对这些选中的客户端
             local_model = LocalUpdate(args=args, dataset=train_dataset,
                                       idxs=user_groups[idx], logger=logger)
             w, loss = local_model.update_weights(
-                model=copy.deepcopy(global_model), global_round=epoch)
-            local_weights.append(copy.deepcopy(w))
-            local_losses.append(copy.deepcopy(loss))
+                model=copy.deepcopy(global_model), global_round=epoch)  # w是此客户端经过本地训练后的权重， loss是训练的损失
+            local_weights.append(copy.deepcopy(w))  # 此客户端权重加入local_weights列表
+            local_losses.append(copy.deepcopy(loss))  # 此客户端损失加入local_losses列表
 
-        # update global weights
+        # update global weights  经过上一步的客户端的本地训练，获取了所选客户端更新后的权重，现在对全局权重进行更新
         global_weights = average_weights(local_weights)
 
-        # update global weights
+        # update global weights  更新模型
         global_model.load_state_dict(global_weights)
 
-        loss_avg = sum(local_losses) / len(local_losses)
-        train_loss.append(loss_avg)
+        loss_avg = sum(local_losses) / len(local_losses)  # 在一次全局epoch中所选客户端的平均损失
+        train_loss.append(loss_avg)  # 加入train_loss列表
 
-        # Calculate avg training accuracy over all users at every epoch
+        # Calculate avg training accuracy over all users at every epoch  计算每个全局epoch之后的精度与损失
         list_acc, list_loss = [], []
         global_model.eval()
         for c in range(args.num_users):

@@ -81,7 +81,7 @@ def average_weights(w):
     for key in w_avg.keys():
         for i in range(1, len(w)):
             w_avg[key] += w[i][key]
-        w_avg[key] = torch.div(w_avg[key], len(w))
+        w_avg[key] = torch.div(w_avg[key], len(w))  # 除法 求模型权重的均值
     return w_avg
 
 

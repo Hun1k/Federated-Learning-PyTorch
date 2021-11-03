@@ -58,7 +58,7 @@ def args_parser():
                         non-i.i.d setting (use 0 for equal splits)')  # 不均等的数据分割（0均等）
     parser.add_argument('--stopping_rounds', type=int, default=10,
                         help='rounds of early stopping')  # 不懂
-    parser.add_argument('--verbose', type=int, default=1, help='verbose')
+    parser.add_argument('--verbose', type=int, default=1, help='verbose')  # 打印日志
     parser.add_argument('--seed', type=int, default=1, help='random seed')  # 种子
     args = parser.parse_args()
     return args
