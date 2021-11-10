@@ -84,7 +84,7 @@ class LocalUpdate(object):
                 self.logger.add_scalar('loss', loss.item())
                 batch_loss.append(loss.item())  # 记录损失（本地一个轮次，一个batch_size记录一次损失）
             epoch_loss.append(sum(batch_loss)/len(batch_loss))  # 记录损失， 一个epoch记录一次损失（是batchloss取平均）
-        # 在返回模型权重信息之前，应该对权重添加信息
+        # 在返回模型权重信息之前，应该对权重添加噪声
         return model.state_dict(), sum(epoch_loss) / len(epoch_loss)  # 调用一次update_weights，客户端进行本地训练，返回模型state_dict， 客户端的损失函数（epoch_loss取平均）
 
     def inference(self, model):
