@@ -13,13 +13,13 @@ def args_parser():
                         help="number of rounds of training")  # 联邦学习全局训练轮次
     parser.add_argument('--num_users', type=int, default=100,
                         help="number of users: K")  # 客户端数量
-    parser.add_argument('--frac', type=float, default=0.1,
+    parser.add_argument('--frac', type=float, default=0.2,
                         help='the fraction of clients: C')  # 参与训练的客户端比例
     parser.add_argument('--local_ep', type=int, default=10,
                         help="the number of local epochs: E")   # 本地训练的epochs
     parser.add_argument('--local_bs', type=int, default=10,
                         help="local batch size: B")  # 本地训练的batch size
-    parser.add_argument('--lr', type=float, default=0.01,
+    parser.add_argument('--lr', type=float, default=0.03,
                         help='learning rate')  # 学习率
     parser.add_argument('--momentum', type=float, default=0.5,
                         help='SGD momentum (default: 0.5)')    # 动量随机梯度下降，对SGD的改进，减少其环绕方向的分量，向最优点行进的# 更快，更平稳 t = βt' + (1-β）t'
@@ -34,7 +34,7 @@ def args_parser():
     parser.add_argument('--num_channels', type=int, default=1, help="number \
                         of channels of imgs")  # 图片的通道数量
     parser.add_argument('--norm', type=str, default='batch_norm',
-                        help="batch_norm, layer_norm, or None")  # ？不懂
+                        help="batch_norm, layer_norm, or None")
     parser.add_argument('--num_filters', type=int, default=32,
                         help="number of filters for conv nets -- 32 for \
                         mini-imagenet, 64 for omiglot.")    # omniglot具有1623个类别，但每个类别只有20张图片，即更加复杂
@@ -47,8 +47,10 @@ def args_parser():
                         of dataset")  # 数据集名字
     parser.add_argument('--num_classes', type=int, default=10, help="number \
                         of classes")    # 分类的种类数量
-    parser.add_argument('--gpu', default=None, help="To use cuda, set \
-                        to a specific GPU ID. Default set to use CPU.")  # 是否使用GPU，数字代表GPU的序号
+    parser.add_argument('--gpu', default=0, help="To use cuda, set \
+                        to a specific GPU ID. Default set to use CPU.")  # 是否使用GPU
+    parser.add_argument('--no_gpu', default=0, help="To use cuda, set \
+                        to a specific GPU ID. Default set to use CPU.")  # 数字代表GPU的序号
     parser.add_argument('--optimizer', type=str, default='sgd', help="type \
                         of optimizer")  # 优化方法，默认SGD
     parser.add_argument('--iid', type=int, default=1,
@@ -60,5 +62,9 @@ def args_parser():
                         help='rounds of early stopping')  # 不懂
     parser.add_argument('--verbose', type=int, default=1, help='verbose')  # 打印日志
     parser.add_argument('--seed', type=int, default=1, help='random seed')  # 种子
+    parser.add_argument('--noise', type=int, default=0, help='add noise 0 for not add, 1 for add')
+    parser.add_argument('--c', type=float, default=0, help='center of weight')
+    parser.add_argument('--r', type=float, default=0.075, help='radio of weight')
+    parser.add_argument('--eps', type=float, default=1, help='privacy budget')
     args = parser.parse_args()
     return args

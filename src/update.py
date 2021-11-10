@@ -76,11 +76,10 @@ class LocalUpdate(object):
                 loss = self.criterion(log_probs, labels)  # 预测 标签 算出损失
                 loss.backward()  # 反向传播
                 optimizer.step()  # 梯度下降
-#****************************************************************梯度剪裁有问题
-                w = model.state_dict()['fc1.weight']
+
+                w = model.state_dict()['fc1.weight']  # 梯度剪裁
                 w[w >= 0.075] = 0.075
                 w[w <= -0.075] = -0.075
-#*****************************************************************
 
                 if self.args.verbose and (batch_idx % 10 == 0):  # 打印运行日志 全局轮次，本地轮次， 本地轮次进度， 损失
                     print('| Global Round : {} | Local Epoch : {} | [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
@@ -90,7 +89,7 @@ class LocalUpdate(object):
                 self.logger.add_scalar('loss', loss.item())
                 batch_loss.append(loss.item())  # 记录损失（本地一个轮次，一个batch_size记录一次损失）
             epoch_loss.append(sum(batch_loss)/len(batch_loss))  # 记录损失， 一个epoch记录一次损失（是batchloss取平均）
-#******************************************************************添加噪声
+# 添加噪声
         if self.args.noise:
             w = model.state_dict()['fc1.weight'].numpy()
             pr = ((w - self.args.c) * (np.exp(self.args.eps) - 1) + self.args.r * (np.exp(self.args.eps) + 1)) / (2 * self.args.r * (np.exp(self.args.eps) + 1))
@@ -99,7 +98,7 @@ class LocalUpdate(object):
             w[bernoulli == 1] = self.args.c+self.args.r*(np.exp(self.args.eps)+1)/(np.exp(self.args.eps)-1)
             w[bernoulli == 0] = self.args.c-self.args.r*(np.exp(self.args.eps)+1)/(np.exp(self.args.eps)-1)
             print(model.state_dict()['fc1.weight'].numpy())
-#************************************************************************
+
         # 在返回模型权重信息之前，应该对权重添加信息
         return model.state_dict(), sum(epoch_loss) / len(epoch_loss)  # 调用一次update_weights，客户端进行本地训练，返回模型state_dict， 客户端的损失函数（epoch_loss取平均）
 

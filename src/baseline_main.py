@@ -83,7 +83,8 @@ if __name__ == '__main__':
         loss_avg = sum(batch_loss)/len(batch_loss)
         print('\nTrain loss:', loss_avg)
         epoch_loss.append(loss_avg)
-
+    print(global_model.state_dict())
+    print(global_model.state_dict()['fc1.weight'])
     # Plot loss
     plt.figure()
     plt.plot(range(len(epoch_loss)), epoch_loss)

@@ -30,7 +30,7 @@ if __name__ == '__main__':
     exp_details(args)  # 打印模型参数
 
     if args.gpu:
-        torch.cuda.set_device(args.gpu)
+        torch.cuda.set_device(args.no_gpu)
     device = 'cuda' if args.gpu else 'cpu'
 
     # load dataset and user groups 训练集 测试集 和一个各个客户端的数据分组情况， 字典类型，key：客户端 value 数据在数据集中的位置
